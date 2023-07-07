@@ -1,0 +1,65 @@
+---
+# webservers_advanced/tasks/main.yml file
+
+# Doc : https://www.pc-freak.net/blog/install-memcached-debian-gnu-linux/
+
+- name: Verify that apache service exist
+  stat: 
+    path: /usr/sbin/apache2ctl
+  register: apacheservice_status
+
+- name: Ensure packages are installed (memcached, php-fpm, php-memcached)
+  apt:
+    state: present
+    name: "{{ item }}"
+    update_cache: yes
+  loop:
+    - memcached
+    - "php{{ php_version }}-fpm"
+    - php-memcached
+
+- name: Enable apache php-fpm configurations
+  command: 
+    cmd: "a2enconf php{{ php_version }}-fpm.conf"
+    creates: "/etc/apache2/conf-enabled/php{{ php_version }}-fpm.conf"
+  notify: Reload apache
+
+- name: Verify that php service exist
+  stat: 
+    path: 
+  register: phpservice_status
+
+- name: Verify that /etc/memcached.conf exist
+  stat:
+    path: /etc/memcached.conf
+  register: memcachedconf_status
+
+- name: Modify memcached config
+  lineinfile:
+    path: /etc/memcached.conf
+    regexp: '^-l'
+    line: '-l 0.0.0.0'
+  notify: Restart memcached
+  when: memcachedconf_status.stat.exists
+
+- name: "Verify that /etc/php/{{ php_version }}/fpm/php.ini exist"
+  stat:
+    path: /etc/php/{{ php_version }}/fpm/php.ini
+  register: phpconf_status
+
+- name: Modify php config
+  lineinfile:
+    path: "/etc/php/{{ php_version }}/fpm/php.ini"
+    regexp: '{{ item.regex }}'
+    line: '{{ item.line }}'
+  loop:
+    - { regex: '^session.save_handler', line: 'session.save_handler = memcached' }
+    - { regex: '^;?session.save_path =', line: 'session.save_path = "192.168.56.13:11211, 192.168.56.14:11211"' }
+  notify: Restart php
+  when: phpconf_status.stat.exists
+
+- name: Send php test file 
+  copy:
+    src: files/test_sessions.php
+    dest: /var/www/html/test_sessions.php
+

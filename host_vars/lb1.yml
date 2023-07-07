@@ -1,0 +1,6 @@
+---
+# lb1.yml file
+
+keepalived_state: master
+keepalived_priority: 101
+

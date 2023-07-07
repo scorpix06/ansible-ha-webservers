@@ -1,0 +1,59 @@
+---
+# apache2/task/main.yml file
+
+- name: Ensure apache is installed
+  apt:
+    name: apache2
+    state: present
+    update_cache: yes
+
+- name: Verify that apache is installed
+  stat: 
+    path: /usr/sbin/apache2ctl
+  register: file_status
+
+- name: Verify that apache service exist
+  stat: 
+    path: /usr/sbin/apache2ctl
+  register: apacheservice_status
+
+- name: Enable apache2 modules
+  community.general.apache2_module:
+    state: present
+    name: "{{ item }}"
+  loop:
+    - headers
+    - expires
+    - rewrite
+    - proxy_fcgi
+    - ssl
+    - actions
+
+  when: file_status.stat.exists
+  notify: Restart apache
+
+- name: Copy expires.conf and headers.conf on webserver
+  copy: 
+    src: '{{ item }}'
+    dest: /etc/apache2/conf-available
+  loop:
+    - files/expires.conf
+    - files/headers.conf
+
+- name: Enable configurations
+  command: 
+    cmd: "a2enconf {{ item }}"
+    creates: "/etc/apache2/conf-enabled/{{ item }}"
+  loop:
+    - expires.conf
+    - headers.conf
+  notify: Reload apache
+
+- name: Send source files to /var/www/html
+  template:
+    src: templates/testlb.html.j2
+    dest: /var/www/html/testlb.html
+
+
+
+

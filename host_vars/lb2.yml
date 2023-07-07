@@ -1,0 +1,6 @@
+---
+# lb2.yml file
+
+keepalived_state: slave
+keepalived_priority: 100
+

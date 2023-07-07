@@ -1,0 +1,9 @@
+---
+# keepalived/handlers/main.yml file
+
+- name: Restart keepalived
+  systemd:
+    name: keepalived
+    state: restarted
+  when: keepalivedservice_status.stat.exists
+

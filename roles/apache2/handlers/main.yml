@@ -1,0 +1,14 @@
+---
+# apache2/handlers/main.yml file
+
+- name:  Restart apache
+  systemd:
+    name: apache2
+    state: restarted
+  when: apacheservice_status.stat.exists
+
+- name: Reload apache
+  systemd: 
+    name: apache2
+    state: reloaded
+  when: apacheservice_status.stat.exists

@@ -1,0 +1,18 @@
+---
+# webservers_advanced/handlers/main.yml file
+
+- name: Restart memcached
+  systemd:
+    name: memcached
+    state: restarted
+
+- name: Restart php
+  systemd:
+    name: "php{{ php_version }}-fpm"
+    state: restarted
+
+- name: Reload apache
+  systemd: 
+    name: apache2
+    state: reloaded
+  when: apacheservice_status.stat.exists

@@ -1,0 +1,2 @@
+keepalived_virtual_ipaddress: "192.168.56.250"
+keepalived_interface: eth1

@@ -1,0 +1,8 @@
+---
+# haproxy/handlers/main.yml file
+
+- name: Restart haproxy
+  systemd:
+    name: haproxy
+    state: restarted
+  when: haproxyservice_status.stat.exists

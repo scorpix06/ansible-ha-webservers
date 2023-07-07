@@ -1,0 +1,21 @@
+frontend ft_web
+  bind *:80
+  mode http
+  default_backend bk_web
+
+backend bk_web
+  balance roundrobin
+  option forwardfor
+  {% for host in groups['webservers'] -%}
+  server {{ hostvars[host].inventory_hostname }} {{ hostvars[host].ansible_host }}:80 check
+  {% endfor %}
+
+listen stats
+  bind *:8080
+  stats enable
+  stats uri /haproxy
+  stats show-legends
+  stats show-node
+  stats realm Auth\ required
+  stats auth admin:admin
+  stats admin if TRUE

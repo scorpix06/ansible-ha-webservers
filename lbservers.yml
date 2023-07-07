@@ -1,0 +1,4 @@
+- hosts: lbservers
+  roles:
+    - keepalived
+    - haproxy

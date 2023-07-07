@@ -1,0 +1,13 @@
+lb1 ansible_host=192.168.56.11
+lb2 ansible_host=192.168.56.12
+
+web1 ansible_host=192.168.56.13
+web2 ansible_host=192.168.56.14
+
+[lbservers]
+lb1
+lb2
+
+[webservers]
+web1
+web2

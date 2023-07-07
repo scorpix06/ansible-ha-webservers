@@ -1,0 +1,32 @@
+---
+# haproxy/tasks/main.yml file
+
+- name: Ensure haproxy is installed
+  apt:
+    name: haproxy
+    state: present
+    update_cache: yes
+
+- name: Verify that haproxy service exist
+  stat: 
+    path: /lib/systemd/system/haproxy.service
+  register: haproxyservice_status
+
+- name: Upload configuration file
+  template:
+    src: templates/web.cfg.j2
+    dest: /etc/haproxy/web.cfg
+  notify: Restart haproxy
+
+- name: Check existance of web.cfg file
+  stat: 
+    path: /etc/haproxy/web.cfg
+  register: file_status
+
+- name: Verify EXTRAOPT
+  lineinfile:
+    path: /etc/default/haproxy
+    regexp: '^EXTRAOPTS='
+    insertafter: '^#EXTRAOPTS='
+    line: "EXTRAOPTS='-f /etc/haproxy/web.cfg'"
+  when: file_status.stat.exists

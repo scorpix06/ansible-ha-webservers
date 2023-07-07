@@ -1,0 +1,20 @@
+---
+# file main.yml
+
+- name: Ensure keepalived is downloaded
+  apt:
+    name: keepalived
+    state: present
+    update_cache: yes
+
+- name: Upload configuration file
+  template:
+    src: templates/keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: Restart keepalived
+
+- name: Verify that keepalived service exist
+  stat: 
+    path: /lib/systemd/system/keepalived.service
+  register: keepalivedservice_status
+  
