@@ -11,6 +11,11 @@ vrrp_instance VI_1 {
   virtual_router_id 51
   priority {{ keepalived_priority }}
 
+  authentication {
+    auth_type PASS
+    auth_pass {{ keepalived_pass }}              
+  }
+
   virtual_ipaddress {
     {{ keepalived_virtual_ipaddress }}
   }
