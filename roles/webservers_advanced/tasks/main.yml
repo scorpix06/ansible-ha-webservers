@@ -54,7 +54,7 @@
     line: '{{ item.line }}'
   loop:
     - { regex: '^session.save_handler', line: 'session.save_handler = memcached' }
-    - { regex: '^;?session.save_path =', line: 'session.save_path = "192.168.56.13:11211, 192.168.56.14:11211"' }
+    - { regex: '^;?session.save_path =', line: 'session.save_path = "{{ webservers__ips }}"' }
   notify: Restart php
   when: phpconf_status.stat.exists
 

@@ -1,0 +1,1 @@
+webservers__ips: "{{ groups['webservers'] | map('extract', hostvars, ['ansible_eth1', 'ipv4', 'address']) | join(':11211,') }}:11211"

@@ -2,3 +2,6 @@
 id_rsa
 id_rsa.pub
 Vagrantfile
+.vagrant
+AUTHORS
+*.log
