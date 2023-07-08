@@ -1,3 +1,6 @@
 keepalived_virtual_ipaddress: "192.168.56.250"
 keepalived_interface: eth1
 keepalived_pass: suThpFxbMZARvHYo2XJj
+
+haproxy_stats_user: admin
+haproxy_stats_password: password

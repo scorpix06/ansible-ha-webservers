@@ -17,5 +17,5 @@ listen stats
   stats show-legends
   stats show-node
   stats realm Auth\ required
-  stats auth admin:admin
+  stats auth {{ haproxy_stats_user }}:{{ haproxy_stats_password }}
   stats admin if TRUE
